@@ -47,11 +47,6 @@ resource "aws_security_group" "network_security_group" {
   }
 }
 
-resource "aws_ebs_volume" "ebs_volume" {
-  availability_zone = "eu-west-1a"
-  size              = 30
-}
-
 # Creating Ubuntu EC2 instance
 resource "aws_instance" "db_server" {
   ami             = var.ubuntu_ami
@@ -61,12 +56,12 @@ resource "aws_instance" "db_server" {
   vpc_security_group_ids = [aws_security_group.network_security_group.id]
   associate_public_ip_address = true
 
-  # ebs_block_device {
-  #   device_name =
-  #   volume_size = 50
-  #   volume_type = "gp2"
-  #   delete_on_termination = true
-  # }
+  root_block_device {
+    volume_size = 30
+    volume_type = "gp2"
+    encrypted = true
+    delete_on_termination = true
+  }
 
   tags = {
     Name = "ubuntu-vm"
